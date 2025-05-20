@@ -1,23 +1,9 @@
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-dotenv.config({ path: resolve(__dirname, '..', '.env') });
-
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ai-podcast';
-
-// Connection options
-const options = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-};
 
 // Create connection
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(MONGODB_URI, options);
+        const conn = await mongoose.connect(process.env.MONGO_URI);
         console.log(`MongoDB Connected: ${conn.connection.host}`);
         
         // Handle connection events
@@ -48,4 +34,4 @@ const connectDB = async () => {
     }
 };
 
-export default connectDB; 
+export default connectDB;
