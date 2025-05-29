@@ -3,7 +3,7 @@ import config from "../config.js";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-async function scriptGen(topic) {
+async function scriptGenCall(topic, inputModel) {
   let scriptGenPrompt = `Generate a 1-minute podcast conversation script between two hosts (Host A and Host B) discussing the topic: ${topic}.
 
     FORMAT:
@@ -32,8 +32,8 @@ async function scriptGen(topic) {
     console.log("Generating script...");
 
     const response = await ai.models.generateContent({
-      // model: "gemini-2.0-flash",
-      model: "gemini-1.5-flash",
+      model: inputModel,
+      // model: "gemini-1.5-flash",
       contents: scriptGenPrompt,
       generationConfig: {
         temperature: 0.7,
@@ -45,8 +45,8 @@ async function scriptGen(topic) {
     });
 
     const title = await ai.models.generateContent({
-      // model: "gemini-2.0-flash",
-      model: "gemini-1.5-flash",
+      model: inputModel,
+      // model: "gemini-1.5-flash",
       contents: titleGenPrompt,
       generationConfig: {
         temperature: 0.7,
@@ -57,7 +57,6 @@ async function scriptGen(topic) {
       },
     });
 
-    console.log("Script generated successfully!");
     if (title.toString().endsWith("\n")) {
       title = title.toString().slice(0, -2);
     }
@@ -65,6 +64,23 @@ async function scriptGen(topic) {
     return { script: response.text, title: title.text };
   } catch (err) {
     console.log(err);
+  }
+}
+
+async function scriptGen(topic) {
+  let op = await scriptGenCall(topic, "gemini-2.0-flash");
+  if (op != null || op != undefined) {
+    console.log("Script generated successfully with gemini-2.0-flash");
+    return op;
+  } else {
+    op = await scriptGenCall(topic, "gemini-1.5-flash");
+    if (op != null || op != undefined) {
+      console.log("Script generated successfully with gemini-1.5-flash");
+      return op;
+    } else {
+      console.log("Error generating script");
+      return null;
+    }
   }
 }
 

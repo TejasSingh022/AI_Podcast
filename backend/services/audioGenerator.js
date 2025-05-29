@@ -1,39 +1,8 @@
-import { createClient } from "@deepgram/sdk";
-import { ElevenLabsClient } from "elevenlabs";
 import { pipeline } from "stream/promises";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
-import APIs from "../config.js";
-
-// Deepgram API
-const deepgramAudio = async (text, model) => {
-  try {
-    const deepgram = createClient(APIs.DEEPGRAM_API_KEY);
-    const response = await deepgram.speak.request({ text }, { model: model });
-    return response;
-  } catch (error) {
-    console.error("Error generating audio from deepgram:", error);
-  }
-};
-
-// ElevenLabs API
-const elevenlabsAudio = async (text, model) => {
-  try {
-    const client = new ElevenLabsClient({
-      apiKey: APIs.ELEVENLABS_API_KEY,
-    });
-    const audio = await client.textToSpeech.convert(model, {
-      text: text,
-      model_id: "eleven_flash_v2_5",
-      output_format: "mp3_44100_128",
-    });
-    //await play(audio);
-    return audio;
-  } catch (err) {
-    console.error("Error generating audio from elevenlabs:", err);
-  }
-};
+import { deepgramAudio, elevenlabsAudio } from "./voiceProviders.js";
 
 // Helper function to convert readable stream to buffer for ElevenLabs API
 async function readableStreamToBuffer(readableStream) {

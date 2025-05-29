@@ -129,7 +129,9 @@ function PromptInput() {
                     {script}
                   </div>
                   <button
-                    onClick={setIsAudio}
+                    onClick={() => {
+                      setIsAudio(true);
+                    }}
                     className="bg-zinc-900 w-[90%] text-white rounded-md mb-5 p-2  hover:cursor-pointer"
                   >
                     Select Voice
